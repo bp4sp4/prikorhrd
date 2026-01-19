@@ -1,0 +1,141 @@
+.container {
+    min-width: 320px;
+    max-width: 640px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background-color: #fff;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  /* 헤더 */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    position: relative;
+    border-bottom: 1px solid #f2f4f6;
+    border-left: 1px solid #e5e5e5;
+    border-right: 1px solid #e5e5e5;
+  }
+  
+  .backButton {
+    position: absolute;
+    left: 24px;
+    width: 24px;
+    height: 24px;
+    aspect-ratio: 1/1;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .backButton svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .logo {
+    height: 34px;
+    width: auto;
+  }
+  
+  .stepWrapper {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #e5e5e5;
+    border-right: 1px solid #e5e5e5;
+  }
+  
+  /* 이미지 스타일 */
+  .heroImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0 0 20px 20px;
+  }
+  
+  /* 텍스트 스타일 */
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 32px;
+    color: #191f28;
+    white-space: pre-line;
+  }
+  
+  /* 입력 필드 */
+  .inputGroup {
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease;
+  }
+  
+  .inputLabel {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: #4e5968;
+    margin-bottom: 12px;
+  }
+  
+  .inputField {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid #f2f4f6;
+    padding: 12px 0;
+    font-size: 18px;
+    transition: border-color 0.2s;
+  }
+  
+  .inputField:focus {
+    outline: none;
+    border-bottom: 2px solid #3182f7;
+    border-radius: 0;
+  }
+  
+  .errorMessage {
+    color: #f04452;
+    font-size: 14px;
+    margin-top: 8px;
+    margin-bottom: 0;
+  }
+  
+  /* 버튼 */
+  .bottomButton {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 48px);
+    max-width: 592px;
+    height: 56px;
+    background-color: #3182f7;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .bottomButton:disabled {
+    background-color: #f2f4f6;
+    color: #b0b8c1;
+    cursor: not-allowed;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
