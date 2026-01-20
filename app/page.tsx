@@ -121,13 +121,20 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
             </svg>
           </button>
         )}
-        <Image
-          src="/logo.png"
-          alt="정책자금"
-          width={130}
-          height={34}
-          className={styles.logo}
-        />
+        <a
+          href="https://xn--ok0bx6qu3cv5m.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <Image
+            src="/logo.png"
+            alt="정책자금"
+            width={130}
+            height={34}
+            className={styles.logo}
+          />
+        </a>
       </header>
       <AnimatePresence mode="wait">
         {/* STEP 1: 이미지 안내 */}
