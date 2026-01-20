@@ -110,6 +110,23 @@
     margin-bottom: 0;
   }
   
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    color: #191f28;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--Blue-500);
+  }
+  
   /* 버튼 */
   .bottomButton {
     position: fixed;
@@ -172,6 +189,98 @@
     color: #191f28;
     margin: 0;
     line-height: 1.6;
+  }
+  
+  /* 개인정보처리방침 모달 */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 24px;
+  }
+  
+  .modalPrivacy {
+    background-color: #fff;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .modalPrivacyHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 1px solid #f2f4f6;
+  }
+  
+  .modalPrivacyTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #191f28;
+    margin: 0;
+  }
+  
+  .modalCloseButton {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4e5968;
+    padding: 0;
+  }
+  
+  .modalPrivacyContent {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .modalPrivacyScroll {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  
+  .modalPrivacyItem {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4e5968;
+    margin: 0 0 24px 0;
+  }
+  
+  .modalPrivacyItem strong {
+    color: #191f28;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+  }
+  
+  .privacyLink {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--Blue-500);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: inherit;
+    font-family: inherit;
   }
   
   @keyframes fadeIn {

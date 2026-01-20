@@ -46,6 +46,8 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
   });
   const [loading, setLoading] = useState(false);
   const [contactError, setContactError] = useState('');
+  const [privacyAgreed, setPrivacyAgreed] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // 연락처 포맷팅 (010-XXXX-XXXX)
   const formatContact = (value: string) => {
@@ -104,7 +106,7 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
     }
   };
 
-  const isFormValid = formData.name.length > 0 && formData.contact.replace(/[-\s]/g, '').length >= 10 && !contactError;
+  const isFormValid = formData.name.length > 0 && formData.contact.replace(/[-\s]/g, '').length >= 10 && !contactError && privacyAgreed;
 
   return (
     <div className={styles.container}>
@@ -230,6 +232,36 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
               </motion.div>
             )}
 
+            {formData.contact.length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }} 
+                animate={{ opacity: 1, y: 0 }} 
+                className={styles.inputGroup}
+              >
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={privacyAgreed}
+                    onChange={(e) => setPrivacyAgreed(e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowPrivacyModal(true);
+                      }}
+                      className={styles.privacyLink}
+                    >
+                      개인정보처리방침
+                    </button>
+                    {' '}동의
+                  </span>
+                </label>
+              </motion.div>
+            )}
+
             <button
               className={styles.bottomButton}
               disabled={!isFormValid || loading}
@@ -261,6 +293,57 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* 개인정보처리방침 모달 */}
+      {showPrivacyModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowPrivacyModal(false)}>
+          <div className={styles.modalPrivacy} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalPrivacyHeader}>
+              <h3 className={styles.modalPrivacyTitle}>개인정보처리방침</h3>
+              <button
+                className={styles.modalCloseButton}
+                onClick={() => setShowPrivacyModal(false)}
+                aria-label="닫기"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className={styles.modalPrivacyContent}>
+              <div className={styles.modalPrivacyScroll}>
+                <p className={styles.modalPrivacyItem}>
+                  <strong>1. 개인정보 수집 및 이용 목적</strong>
+                  <br />
+                  상담 진행, 정책자금 컨설팅, 문의사항 응대, 민원해결
+                  <br />
+                  광고성 정보 수신에 대하여 별도의 동의를 한 회원에 한하여
+                  "한평생 바로기업"과 각 제휴사의 새로운 서비스, 이벤트, 최신
+                  정보의 안내 등 회원의 취향에 맞는 최적의 정보 제공
+                </p>
+                <p className={styles.modalPrivacyItem}>
+                  <strong>2. 수집 및 이용하는 개인정보 항목</strong>
+                  <br />
+                  (필수) 이름(회사명), 휴대전화번호
+                  
+                </p>
+                <p className={styles.modalPrivacyItem}>
+                  <strong>3. 보유 및 이용 기간</strong>
+                  <br />
+                  법령이 정하는 경우를 제외하고는 수집일로부터 1년 또는 동의
+                  철회 시까지 보유 및 이용합니다.
+                </p>
+                <p className={styles.modalPrivacyItem}>
+                  <strong>4. 동의 거부 권리</strong>
+                  <br />
+                  신청자는 동의를 거부할 권리가 있습니다. 단, 동의를 거부하는
+                  경우 상담 서비스 이용이 제한됩니다.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
