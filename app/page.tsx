@@ -17,6 +17,7 @@ const formatClickSource = (
     google: "구글",
     youtube: "유튜브",
     kakao: "카카오",
+    naver: "네이버",
   };
 
   const shortSource = sourceMap[utmSource] || utmSource;
