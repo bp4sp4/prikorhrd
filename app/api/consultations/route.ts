@@ -57,12 +57,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, contact, education, reason, click_source } = body;
+    const { name, contact, education, reason, click_source, is_manual_entry } = body;
 
-    // 유효성 검사
-    if (!name || !contact || !education || !reason) {
+    // 유효성 검사 - 이름과 연락처만 필수
+    if (!name || !contact) {
       return NextResponse.json(
-        { error: 'Name, contact, education, and reason are required' },
+        { error: 'Name and contact are required' },
         { status: 400 }
       );
     }
@@ -74,9 +74,10 @@ export async function POST(request: NextRequest) {
         {
           name,
           contact,
-          education,
-          reason,
+          education: education || null,
+          reason: reason || null,
           click_source: click_source || null,
+          status: '상담대기', // 기본 상태
         },
       ])
       .select()
@@ -91,12 +92,14 @@ export async function POST(request: NextRequest) {
     }
 
     // 이메일 알림 전송 (비동기, 실패해도 상담 신청은 성공 처리)
-    console.log('[EMAIL] 이메일 전송 시도 시작');
-    console.log('[EMAIL] 환경 변수 확인:');
-    console.log(
-      '[EMAIL] - BREVO_SMTP_LOGIN 존재:',
-      !!process.env.BREVO_SMTP_LOGIN
-    );
+    // 수동 추가가 아닐 때만 이메일 전송
+    if (!is_manual_entry) {
+      console.log('[EMAIL] 이메일 전송 시도 시작');
+      console.log('[EMAIL] 환경 변수 확인:');
+      console.log(
+        '[EMAIL] - BREVO_SMTP_LOGIN 존재:',
+        !!process.env.BREVO_SMTP_LOGIN
+      );
     console.log(
       '[EMAIL] - BREVO_SMTP_LOGIN 값:',
       process.env.BREVO_SMTP_LOGIN
@@ -167,6 +170,9 @@ export async function POST(request: NextRequest) {
         '[EMAIL] 필요한 환경 변수: BREVO_SMTP_LOGIN, BREVO_SMTP_KEY'
       );
     }
+    } else {
+      console.log('[EMAIL] 수동 추가로 이메일 전송을 건너뜁니다.');
+    }
 
     return NextResponse.json(
       { message: 'Consultation request submitted successfully', data },
@@ -196,7 +202,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { id, is_completed, notes, status } = body;
+    const { id, is_completed, notes, status, memo, name, contact, education, reason, click_source } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
@@ -207,6 +213,12 @@ export async function PATCH(request: NextRequest) {
       is_completed?: boolean;
       notes?: string;
       status?: 'pending' | 'in_progress' | 'completed';
+      memo?: string;
+      name?: string;
+      contact?: string;
+      education?: string | null;
+      reason?: string | null;
+      click_source?: string | null;
     } = {};
 
     if (typeof is_completed === 'boolean') {
@@ -227,9 +239,34 @@ export async function PATCH(request: NextRequest) {
       updateData.notes = notes;
     }
 
+    if (memo !== undefined) {
+      updateData.memo = memo;
+    }
+
+    // 기본 정보 수정
+    if (name !== undefined) {
+      updateData.name = name;
+    }
+
+    if (contact !== undefined) {
+      updateData.contact = contact;
+    }
+
+    if (education !== undefined) {
+      updateData.education = education || null;
+    }
+
+    if (reason !== undefined) {
+      updateData.reason = reason || null;
+    }
+
+    if (click_source !== undefined) {
+      updateData.click_source = click_source || null;
+    }
+
     if (Object.keys(updateData).length === 0) {
       return NextResponse.json(
-        { error: 'At least one field (is_completed or notes) is required' },
+        { error: 'At least one field is required for update' },
         { status: 400 }
       );
     }
@@ -257,6 +294,57 @@ export async function PATCH(request: NextRequest) {
     console.error('Error updating completion status:', error);
     return NextResponse.json(
       { error: 'Failed to update completion status' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE: 상담 신청 삭제
+export async function DELETE(request: NextRequest) {
+  try {
+    // 환경 변수 확인
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.SUPABASE_SERVICE_ROLE_KEY
+    ) {
+      return NextResponse.json(
+        { error: 'Supabase configuration missing' },
+        { status: 500 }
+      );
+    }
+
+    const body = await request.json();
+    const { ids } = body;
+
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+      return NextResponse.json(
+        { error: 'IDs array is required' },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('consultations')
+      .delete()
+      .in('id', ids)
+      .select();
+
+    if (error) {
+      console.error('Error deleting consultations:', error);
+      return NextResponse.json(
+        { error: 'Failed to delete consultations' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Consultations deleted successfully',
+      data,
+    });
+  } catch (error) {
+    console.error('Error deleting consultations:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete consultations' },
       { status: 500 }
     );
   }
