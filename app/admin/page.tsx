@@ -727,8 +727,9 @@ export default function AdminPage() {
                       <div 
                         className={`${styles.memoCell} ${!consultation.memo ? styles.empty : ''}`}
                         onClick={() => openMemoModal(consultation)}
+                        title={consultation.memo || '메모 추가...'}
                       >
-                        {consultation.memo ? highlightText(consultation.memo, searchText) : '메모 추가...'}
+                        {consultation.memo || '메모 추가...'}
                       </div>
                     </td>
                     <td>{formatDate(consultation.created_at)}</td>

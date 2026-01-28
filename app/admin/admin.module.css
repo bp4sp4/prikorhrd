@@ -598,7 +598,9 @@
   background: transparent;
   font-weight: 500;
   
+  
   /* 말줄임표 */
+  max-width: 400px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
