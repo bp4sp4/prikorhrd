@@ -271,7 +271,7 @@
     border-radius: 20px;
     width: 100%;
     max-width: 500px;
-    max-height: 80vh;
+    max-height: 90vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -343,6 +343,126 @@
     font-family: inherit;
   }
   
+  /* 희망과정 선택 필드 */
+  .courseSelectField {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .coursePlaceholder {
+    color: #9CA3AF;
+    font-size: 16px;
+  }
+
+  .courseSelectedText {
+    color: #191f28;
+    font-size: 16px;
+  }
+
+  /* 희망과정 모달 */
+  .courseModalContent {
+    padding: 16px 24px 0;
+  }
+
+  .courseModalDesc {
+    font-size: 14px;
+    color: #6B7280;
+    margin: 0 0 16px 0;
+  }
+
+  .courseList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .courseItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 16px;
+    color: #191f28;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+
+  .courseItem:active {
+    transform: scale(0.98);
+  }
+
+  .courseItemSelected {
+    border-color: #4C85FF;
+    background: #F0F5FF;
+    color: #4C85FF;
+    font-weight: 600;
+  }
+
+  .customCourseWrapper {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #f2f4f6;
+  }
+
+  .customCourseLabel {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4e5968;
+    margin-bottom: 8px;
+  }
+
+  .customCourseInput {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #191f28;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .customCourseInput:focus {
+    outline: none;
+    border-color: #4C85FF;
+  }
+
+  .customCourseInput::placeholder {
+    color: #9CA3AF;
+  }
+
+  .courseModalFooter {
+    padding: 16px 24px 24px;
+  }
+
+  .courseConfirmButton {
+    width: 100%;
+    height: 52px;
+    background-color: #4C85FF;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .courseConfirmButton:disabled {
+    background-color: #f2f4f6;
+    color: #b0b8c1;
+    cursor: not-allowed;
+  }
+
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }

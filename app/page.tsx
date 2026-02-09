@@ -47,6 +47,18 @@ function ClickSourceHandler({ onSourceChange }: { onSourceChange: (source: strin
   return null;
 }
 
+const COURSE_OPTIONS = [
+  '사회복지사',
+  '아동학사',
+  '평생교육사',
+  '편입/대학원',
+  '건강가정사',
+  '청소년지도사',
+  '보육교사',
+  '심리상담사',
+
+];
+
 function StepFlowContent({ clickSource }: { clickSource: string }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -60,6 +72,26 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
   const [contactError, setContactError] = useState('');
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showCourseModal, setShowCourseModal] = useState(false);
+  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [customCourse, setCustomCourse] = useState('');
+
+  const toggleCourse = (course: string) => {
+    setSelectedCourses(prev =>
+      prev.includes(course)
+        ? prev.filter(c => c !== course)
+        : [...prev, course]
+    );
+  };
+
+  const confirmCourseSelection = () => {
+    const all = [...selectedCourses];
+    if (customCourse.trim()) {
+      all.push(customCourse.trim());
+    }
+    setFormData({ ...formData, hope_course: all.join(', ') });
+    setShowCourseModal(false);
+  };
 
   // 연락처 포맷팅 (010-XXXX-XXXX)
   const formatContact = (value: string) => {
@@ -112,7 +144,7 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
         throw new Error(errorData.error || '저장에 실패했습니다.');
       }
 
-      setStep(2);
+      setStep(3);
     } catch (error) {
       console.error('Error submitting form:', error);
       alert(error instanceof Error ? error.message : '저장에 실패했습니다. 다시 시도해주세요.');
@@ -306,14 +338,27 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
 
             {formData.education.length > 0 && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={styles.inputGroup}>
-                <label className={styles.inputLabel}>희망과정을 입력해주세요</label>
-                <input
-                  type="text"
-                  placeholder="예: 사회복지사 2급, 평생교육사 등"
-                  className={styles.inputField}
-                  value={formData.hope_course}
-                  onChange={(e) => setFormData({ ...formData, hope_course: e.target.value })}
-                />
+                <label className={styles.inputLabel}>희망과정을 선택해주세요</label>
+                <div
+                  className={styles.inputField + ' ' + styles.courseSelectField}
+                  onClick={() => {
+                    const existing = formData.hope_course ? formData.hope_course.split(', ').filter(Boolean) : [];
+                    const fromOptions = existing.filter(c => COURSE_OPTIONS.includes(c));
+                    const fromCustom = existing.filter(c => !COURSE_OPTIONS.includes(c));
+                    setSelectedCourses(fromOptions);
+                    setCustomCourse(fromCustom.join(', '));
+                    setShowCourseModal(true);
+                  }}
+                >
+                  {formData.hope_course ? (
+                    <span className={styles.courseSelectedText}>{formData.hope_course}</span>
+                  ) : (
+                    <span className={styles.coursePlaceholder}>과정을 선택해주세요</span>
+                  )}
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5 7.5L10 12.5L15 7.5" stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
               </motion.div>
             )}
 
@@ -441,7 +486,67 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
         </div>
       )}
 
-     
+      {/* 희망과정 선택 모달 */}
+      {showCourseModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowCourseModal(false)}>
+          <div className={styles.modalPrivacy} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalPrivacyHeader}>
+              <h3 className={styles.modalPrivacyTitle}>희망과정 선택</h3>
+              <button
+                className={styles.modalCloseButton}
+                onClick={() => setShowCourseModal(false)}
+                aria-label="닫기"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <div className={styles.courseModalContent}>
+              <p className={styles.courseModalDesc}>복수 선택이 가능합니다</p>
+              <div className={styles.courseList}>
+                {COURSE_OPTIONS.map((course) => (
+                  <button
+                    key={course}
+                    className={`${styles.courseItem} ${selectedCourses.includes(course) ? styles.courseItemSelected : ''}`}
+                    onClick={() => toggleCourse(course)}
+                  >
+                    <span>{course}</span>
+                    {selectedCourses.includes(course) && (
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 10L8 14L16 6" stroke="#4C85FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+              <div className={styles.customCourseWrapper}>
+                <label className={styles.customCourseLabel}>직접 입력</label>
+                <input
+                  type="text"
+                  className={styles.customCourseInput}
+                  placeholder="원하는 과정을 직접 입력해주세요"
+                  value={customCourse}
+                  onChange={(e) => setCustomCourse(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className={styles.courseModalFooter}>
+              <button
+                className={styles.courseConfirmButton}
+                disabled={selectedCourses.length === 0 && !customCourse.trim()}
+                onClick={confirmCourseSelection}
+              >
+                {(selectedCourses.length > 0 || customCourse.trim())
+                  ? '선택 완료'
+                  : '과정을 선택해주세요'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 }

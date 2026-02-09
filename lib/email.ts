@@ -4,6 +4,7 @@ interface ConsultationEmailData {
   name: string;
   contact: string;
   education: string;
+  hope_course?: string | null;
   reason: string;
   click_source?: string | null;
 }
@@ -180,6 +181,12 @@ export async function sendConsultationEmail(data: ConsultationEmailData) {
                 }</td>
               </tr>
               <tr>
+                <td style="padding-bottom: 20px; font-size: 15px; color: #4e5968;">희망과정</td>
+                <td style="padding-bottom: 20px; font-size: 17px; font-weight: 600; color: #191f28; text-align: right;">${
+                  data.hope_course || "미입력"
+                }</td>
+              </tr>
+              <tr>
                 <td style="padding-bottom: 20px; font-size: 15px; color: #4e5968;">취득사유</td>
                 <td style="padding-bottom: 20px; font-size: 17px; font-weight: 600; color: #191f28; text-align: right;">${
                   data.reason
@@ -222,6 +229,7 @@ export async function sendConsultationEmail(data: ConsultationEmailData) {
 이름: ${data.name}
 연락처: ${data.contact}
 최종학력: ${data.education}
+희망과정: ${data.hope_course || "미입력"}
 취득사유: ${data.reason}
 유입 경로: ${data.click_source || "바로폼"}
 신청 시간: ${koreanTime}
@@ -282,7 +290,7 @@ export async function sendConsultationEmail(data: ConsultationEmailData) {
               type: "section",
               text: {
                 type: "mrkdwn",
-                text: `*새 상담 신청 접수*\n\n*이름/기업명:* ${data.name}\n*연락처:* ${data.contact}\n*유입 경로:* ${data.click_source || "랜딩페이지"}\n*신청 시각:* ${koreanTime}`,
+                text: `*새 상담 신청 접수*\n\n*이름/기업명:* ${data.name}\n*연락처:* ${data.contact}\n*희망과정:* ${data.hope_course || "미입력"}\n*유입 경로:* ${data.click_source || "랜딩페이지"}\n*신청 시각:* ${koreanTime}`,
               },
             },
           ],

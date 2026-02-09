@@ -135,6 +135,7 @@ export async function POST(request: NextRequest) {
           name,
           contact,
           education,
+          hope_course: hope_course || null,
           reason,
           click_source: click_source || null,
         });
@@ -208,6 +209,10 @@ export async function POST(request: NextRequest) {
                 {
                   type: 'mrkdwn',
                   text: `*학력:*\n${education || '미입력'}`,
+                },
+                {
+                  type: 'mrkdwn',
+                  text: `*희망과정:*\n${hope_course || '미입력'}`,
                 },
                 {
                   type: 'mrkdwn',
