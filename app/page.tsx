@@ -96,6 +96,18 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
     // 실습신청서 필드
     practice_place: "", // 실습처 배정
     employment_after_cert: "", // 자격증 취득 후 취업여부
+    student_name: "", // 학생 이름
+    gender: "", // 성별
+    birth_date: "", // 생년월일
+    residence_area: "", // 거주지 주소
+    address: "", // 상세 주소
+    practice_start_date: "", // 현장실습 희망날짜
+    grade_report_date: "", // 성적보고일
+    preferred_semester: "", // 희망학기
+    practice_type: "", // 실습 종류
+    preferred_days: "", // 희망 요일
+    has_car: false, // 자차 여부
+    cash_receipt_number: "", // 현금영수증 번호
     // 레거시 필드 (하위호환성)
     education: "", // 최종학력
     hope_course: "", // 희망과정
@@ -158,27 +170,25 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
     setLoading(true);
     try {
       const submitData = {
-        name: formData.name,
+        student_name: formData.student_name,
+        gender: formData.gender,
         contact: formData.contact,
-        type: formData.type,
+        birth_date: formData.birth_date,
+        residence_area: formData.residence_area,
+        address: formData.address,
+        practice_start_date: formData.practice_start_date,
+        grade_report_date: formData.grade_report_date,
+        preferred_semester: formData.preferred_semester,
+        practice_type: formData.practice_type,
+        preferred_days: formData.preferred_days,
+        has_car: formData.has_car,
+        cash_receipt_number: formData.cash_receipt_number || null,
+        privacy_agreed: privacyAgreed,
         click_source: clickSource,
-        employment_after_cert: formData.employment_after_cert,
-        ...(formData.type === "consultation" && {
-          progress: formData.progress,
-          employment_consulting: formData.employment_consulting,
-          employment_connection: formData.employment_connection,
-          student_status: formData.student_status,
-        }),
-        ...(formData.type === "practice" && {
-          practice_place: formData.practice_place,
-        }),
-        // 레거시 필드 (하위호환성)
-        education: formData.education,
-        hope_course: formData.hope_course,
-        reason: formData.reason,
+        type: "practice",
       };
 
-      const response = await fetch("/api/consultations", {
+      const response = await fetch("/api/practice", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -204,18 +214,37 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
     }
   };
 
-  // 유효성 검사 - 성함, 연락처, 개인정보 동의는 필수
+  // 유효성 검사 - 실습신청의 모든 필수 필드 체크
   const isFormValid =
-    formData.name.length > 0 &&
+    formData.student_name.length > 0 &&
+    formData.gender.length > 0 &&
     formData.contact.replace(/[-\s]/g, "").length >= 10 &&
     !contactError &&
+    formData.birth_date.length > 0 &&
+    formData.residence_area.length > 0 &&
+    formData.address.length > 0 &&
+    formData.practice_start_date.length > 0 &&
+    formData.grade_report_date.length > 0 &&
+    formData.preferred_semester.length > 0 &&
+    formData.practice_type.length > 0 &&
+    formData.preferred_days.length > 0 &&
     privacyAgreed;
 
   // 프로그레스 계산 (필수 필드 기준)
-  const totalFields = 3;
+  const totalFields = 13; // 학생이름, 성별, 연락처, 생년월일, 거주지주소, 상세주소, 실습희망날짜, 성적보고일, 희망학기, 실습종류, 희망요일, 자차여부, 개인정보동의
   const filledFields = [
-    formData.name.length > 0,
+    formData.student_name.length > 0,
+    formData.gender.length > 0,
     formData.contact.replace(/[-\s]/g, "").length >= 10 && !contactError,
+    formData.birth_date.length > 0,
+    formData.residence_area.length > 0,
+    formData.address.length > 0,
+    formData.practice_start_date.length > 0,
+    formData.grade_report_date.length > 0,
+    formData.preferred_semester.length > 0,
+    formData.practice_type.length > 0,
+    formData.preferred_days.length > 0,
+    typeof formData.has_car === "boolean",
     privacyAgreed,
   ].filter(Boolean).length;
   const progress = (filledFields / totalFields) * 100;
@@ -315,32 +344,71 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
             </div>
 
             <div className={styles.step2Title}>
-              <h1 className={styles.step2TitleText}>상담신청</h1>
+              <h1 className={styles.step2TitleText}>실습 신청</h1>
             </div>
 
+            {/* 학생 이름 */}
             <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>이름을 입력해주세요</label>
+              <label className={styles.inputLabel}>학생 이름</label>
               <input
                 type="text"
-                placeholder="이름을 입력해주세요"
+                placeholder="학생 이름을 입력해주세요"
                 className={styles.inputField}
-                value={formData.name}
+                value={formData.student_name}
                 onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
+                  setFormData({ ...formData, student_name: e.target.value })
                 }
                 autoFocus
               />
             </div>
 
-            {formData.name.length > 0 && (
+            {/* 성별 */}
+            {formData.student_name.length > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={styles.inputGroup}
               >
-                <label className={styles.inputLabel}>
-                  연락처를 입력해주세요
-                </label>
+                <label className={styles.inputLabel}>성별</label>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="남"
+                      checked={formData.gender === "남"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gender: e.target.value })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>남</span>
+                  </label>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="여"
+                      checked={formData.gender === "여"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, gender: e.target.value })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>여</span>
+                  </label>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 연락처 */}
+            {formData.gender && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>연락처</label>
                 <input
                   type="tel"
                   placeholder="010-0000-0000"
@@ -359,7 +427,7 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
               </motion.div>
             )}
 
-            {/* 자격증 취득 후 취업여부 */}
+            {/* 생년월일 */}
             {formData.contact.replace(/[-\s]/g, "").length >= 10 &&
               !contactError && (
                 <motion.div
@@ -367,77 +435,300 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
                   animate={{ opacity: 1, y: 0 }}
                   className={styles.inputGroup}
                 >
-                  <label className={styles.inputLabel}>
-                    자격증 취득 후 취업여부
-                  </label>
-                  <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="employment_after_cert"
-                        value="O"
-                        checked={formData.employment_after_cert === "O"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            employment_after_cert: e.target.value,
-                          })
-                        }
-                        className={styles.radio}
-                      />
-                      <span>예</span>
-                    </label>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="employment_after_cert"
-                        value="X"
-                        checked={formData.employment_after_cert === "X"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            employment_after_cert: e.target.value,
-                          })
-                        }
-                        className={styles.radio}
-                      />
-                      <span>아니오</span>
-                    </label>
-                  </div>
+                  <label className={styles.inputLabel}>생년월일</label>
+                  <input
+                    type="date"
+                    className={styles.inputField}
+                    value={formData.birth_date}
+                    onChange={(e) =>
+                      setFormData({ ...formData, birth_date: e.target.value })
+                    }
+                  />
                 </motion.div>
               )}
 
-            {/* 개인정보처리방침 동의 */}
-            {formData.contact.replace(/[-\s]/g, "").length >= 10 &&
-              !contactError && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={styles.inputGroup}
+            {/* 거주지 주소 */}
+            {formData.birth_date && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>거주지 주소</label>
+                <input
+                  type="text"
+                  placeholder="예: 서울, 경기도, 부산 등"
+                  className={styles.inputField}
+                  value={formData.residence_area}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      residence_area: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 상세 주소 */}
+            {formData.residence_area && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>상세 주소</label>
+                <input
+                  type="text"
+                  placeholder="상세 주소를 입력해주세요"
+                  className={styles.inputField}
+                  value={formData.address}
+                  onChange={(e) =>
+                    setFormData({ ...formData, address: e.target.value })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 현장실습 희망날짜 */}
+            {formData.address && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>현장실습 희망날짜</label>
+                <input
+                  type="date"
+                  className={styles.inputField}
+                  value={formData.practice_start_date}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      practice_start_date: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 성적보고일 */}
+            {formData.practice_start_date && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>성적보고일</label>
+                <input
+                  type="date"
+                  className={styles.inputField}
+                  value={formData.grade_report_date}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      grade_report_date: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 희망학기 */}
+            {formData.grade_report_date && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>희망학기</label>
+                <input
+                  type="text"
+                  placeholder="예: 2024-1학기"
+                  className={styles.inputField}
+                  value={formData.preferred_semester}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      preferred_semester: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 실습 종류 */}
+            {formData.preferred_semester && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>실습 종류</label>
+                <select
+                  className={styles.inputField}
+                  value={formData.practice_type}
+                  onChange={(e) =>
+                    setFormData({ ...formData, practice_type: e.target.value })
+                  }
                 >
-                  <label className={styles.checkboxLabel}>
+                  <option value="">선택해주세요</option>
+                  <option value="사회복지사 실습 160시간">
+                    사회복지사 실습 160시간
+                  </option>
+                  <option value="사회복지사 실습 120시간">
+                    사회복지사 실습 120시간
+                  </option>
+                  <option value="보육교사 실습 240시간">
+                    보육교사 실습 240시간
+                  </option>
+                  <option value="평생교육사 실습 160시간">
+                    평생교육사 실습 160시간
+                  </option>
+                  <option value="한국어교원 실습">한국어교원 실습</option>
+                </select>
+              </motion.div>
+            )}
+
+            {/* 희망 요일 */}
+            {formData.practice_type && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>희망 요일</label>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
                     <input
-                      type="checkbox"
-                      checked={privacyAgreed}
-                      onChange={(e) => setPrivacyAgreed(e.target.checked)}
-                      className={styles.checkbox}
+                      type="radio"
+                      name="preferred_days"
+                      value="주말"
+                      checked={formData.preferred_days === "주말"}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          preferred_days: e.target.value,
+                        })
+                      }
+                      className={styles.radio}
                     />
-                    <span>
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setShowPrivacyModal(true);
-                        }}
-                        className={styles.privacyLink}
-                      >
-                        개인정보처리방침
-                      </button>{" "}
-                      동의
-                    </span>
+                    <span>주말</span>
                   </label>
-                </motion.div>
-              )}
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="preferred_days"
+                      value="평일"
+                      checked={formData.preferred_days === "평일"}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          preferred_days: e.target.value,
+                        })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>평일</span>
+                  </label>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 자차 여부 */}
+            {formData.preferred_days && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>자차 여부</label>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="has_car"
+                      value="true"
+                      checked={formData.has_car === true}
+                      onChange={() =>
+                        setFormData({ ...formData, has_car: true })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>있음</span>
+                  </label>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="has_car"
+                      value="false"
+                      checked={formData.has_car === false}
+                      onChange={() =>
+                        setFormData({ ...formData, has_car: false })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>없음</span>
+                  </label>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 현금영수증 번호 */}
+            {formData.preferred_days && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  현금영수증 번호 (선택)
+                </label>
+                <input
+                  type="text"
+                  placeholder="현금영수증 번호를 입력해주세요"
+                  className={styles.inputField}
+                  value={formData.cash_receipt_number}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      cash_receipt_number: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+            )}
+
+            {/* 개인정보처리방침 동의 */}
+            {formData.preferred_days && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.checkboxLabel}>
+                  <input
+                    type="checkbox"
+                    checked={privacyAgreed}
+                    onChange={(e) => setPrivacyAgreed(e.target.checked)}
+                    className={styles.checkbox}
+                  />
+                  <span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowPrivacyModal(true);
+                      }}
+                      className={styles.privacyLink}
+                    >
+                      개인정보처리방침
+                    </button>{" "}
+                    동의
+                  </span>
+                </label>
+              </motion.div>
+            )}
 
             <button
               className={styles.bottomButton}
