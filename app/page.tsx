@@ -26,7 +26,7 @@ const formatClickSource = (
   };
 
   const shortSource = sourceMap[utmSource] || utmSource;
-  const homepageName = "바로폼";
+  const homepageName = "실습섭외신청";
 
   if (blogId) {
     return `${homepageName}_${shortSource}_${blogId}`;
@@ -277,7 +277,7 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
             <div className={styles.infoSection}>
               <div className={styles.infoInner}>
                 <div className={styles.step1Title}>
-                  <p className={styles.step1TitleText}>무료 상담신청</p>
+                  <p className={styles.step1TitleText}>실습섭외신청</p>
                 </div>
                 <div className={styles.infoItem}>
                   <div className={styles.infoTitle}>
@@ -302,15 +302,6 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
                   <div className={styles.infoDesc}>
                     자격증 취득 후 취업 연계 지원
                   </div>
-                </div>
-                <div className={styles.infoSection}>
-                  <div className={styles.infoInner}></div>
-                  <button
-                    className={styles.bottomButton}
-                    onClick={() => setStep(2)}
-                  >
-                    다음
-                  </button>
                 </div>
               </div>
               <button
@@ -923,7 +914,7 @@ function StepFlowContent({ clickSource }: { clickSource: string }) {
 }
 
 export default function StepFlowPage() {
-  const [clickSource, setClickSource] = useState<string>("바로폼");
+  const [clickSource, setClickSource] = useState<string>("실습섭외신청");
 
   return (
     <Suspense

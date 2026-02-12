@@ -1,6 +1,8 @@
 /* 하단 안내 및 다음 버튼 영역 */
 .infoSection {
-  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   text-align: center;
   background: #fff;
   padding: 0;
@@ -30,7 +32,6 @@
 }
 
 .infoInner {
-  margin: 0 auto;
   text-align: left;
 }
 .infoItem {
@@ -62,7 +63,7 @@
 .infoNextBtn {
   width: 240px;
   font-size: 18px;
-  margin-top: 12px;
+  margin-top: auto;
 }
 .container {
   min-width: 320px;
@@ -225,12 +226,12 @@
   background-color: var(--Blue-500);
   color: #fff;
   border: none;
-  border-radius: 16px;
+  border-radius: 8px;
   font-size: 17px;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s;
-  margin-top: 24px;
+  margin-top: auto;
   margin-bottom: 24px;
 }
 
