@@ -597,6 +597,136 @@
   margin: 0 auto 24px;
 }
 
+/* 필수 표시 */
+.required {
+  color: #f04452;
+  margin-left: 2px;
+}
+
+/* select 필드 */
+.selectField {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #f2f4f6;
+  padding: 10px 0;
+  font-size: 16px;
+  color: #191f28;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234e5968' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 4px center;
+  padding-right: 28px;
+}
+
+.selectField:focus {
+  outline: none;
+  border-bottom: 2px solid #4c85ff;
+}
+
+.selectField option:first-child {
+  color: #9ca3af;
+}
+
+/* 주소 검색 버튼 */
+.addressSearchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 0;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 8px;
+  background: #f8f9fa;
+  font-size: 15px;
+  font-weight: 500;
+  color: #4e5968;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.addressSearchBtn:active {
+  background: #e5e7eb;
+}
+
+/* 주소 안내 문구 */
+.addressNote {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+/* 체크박스 그룹 (고용형태) */
+.checkboxGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.checkboxItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  color: #191f28;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* 결제 금액 박스 */
+.paymentBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  background: #f8f9fa;
+}
+
+.paymentLabel {
+  font-size: 16px;
+  font-weight: 600;
+  color: #4e5968;
+}
+
+.paymentAmount {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+/* 동의 섹션 */
+.agreementSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* 동의 링크 (밑줄) */
+.agreementLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #191f28;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.requiredBadge {
+  color: #f04452;
+  font-size: 13px;
+}
+
 /* 로딩 스피너 */
 .loadingContainer {
   display: flex;
