@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Script from "next/script";
-import { useState, useCallback, Suspense } from "react";
+import { useState, useCallback, Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./stepflow.module.css";
@@ -106,6 +106,15 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showPaymentNoticeModal, setShowPaymentNoticeModal] = useState(false);
+
+  // URL 파라미터로 결제 완료 감지 (팝업/모바일 리다이렉트 후)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("payment") === "success" && params.get("step") === "3") {
+      setStep(3);
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
 
   const formatContact = (value: string) => {
     const cleaned = value.replace(/[^0-9]/g, "");
@@ -238,7 +247,24 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
         throw new Error(errorData.error || "저장에 실패했습니다.");
       }
 
-      setStep(3);
+      const responseData = await response.json();
+
+      if (responseData.payurl) {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+        if (isMobile) {
+          window.location.href = responseData.payurl;
+        } else {
+          window.open(
+            responseData.payurl,
+            "payapp_payment",
+            "width=800,height=900,left=200,top=100"
+          );
+        }
+      } else {
+        setStep(3);
+      }
     } catch (error) {
       alert(
         error instanceof Error
@@ -678,7 +704,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 className={styles.step3Image}
               />
               <h1 className={styles.title}>
-                신청이 완료되었습니다.{"\n"}입력하신 번호로{"\n"}결제 안내 문자가 발송됩니다.
+                결제가 완료되었습니다.{"\n"}실습 섭외 신청이{"\n"}정상적으로 접수되었습니다.
               </h1>
             </motion.div>
           )}

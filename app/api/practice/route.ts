@@ -159,29 +159,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // payapp 등록결제(BILL) API 호출
-    if (process.env.PAYAPP_USERID && process.env.PAYAPP_ENC_BILL) {
+    // payapp 링크결제(payrequest) API 호출
+    let payurl: string | null = null;
+    if (process.env.PAYAPP_USERID && process.env.PAYAPP_LINK_KEY) {
       try {
         const recvphone = contact.replace(/-/g, '');
-        const feedbackUrl = process.env.NEXT_PUBLIC_BASE_URL
-          ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/payapp/feedback`
-          : '';
+        const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/$/, '');
 
         const payappParams = new URLSearchParams({
-          cmd: 'billPay',
+          cmd: 'payrequest',
           userid: process.env.PAYAPP_USERID,
-          encBill: process.env.PAYAPP_ENC_BILL,
+          linkkey: process.env.PAYAPP_LINK_KEY,
           shopname: process.env.PAYAPP_SHOP_NAME || '한평생교육',
           goodname: `한평생교육 실습 섭외 신청 - ${practice_type}`,
           price: '110000',
           recvphone,
-          amount_taxable: '100000', // 공급가액
-          amount_taxfree: '0',      // 면세금액
-          amount_vat: '10000',      // 부가세
-          feedbackurl: feedbackUrl,
-          var1: data.id,            // 신청 ID (feedback에서 DB 업데이트용)
-          checkretry: 'y',
-          cardinst: '00',
+          memo: name,
+          feedbackurl: `${baseUrl}/api/payapp/feedback`,
+          returnurl: `${baseUrl}/api/payapp/result?var1=${data.id}`,
+          var1: data.id,
+          skip_cstpage: 'y',
+          smsuse: 'n',
+          openpaytype: 'card,kakaopay,naverpay,payco,applepay,myaccount',
+          amount_taxable: '100000',
+          amount_taxfree: '0',
+          amount_vat: '10000',
         });
 
         const payappRes = await fetch('https://api.payapp.kr/oapi/apiLoad.html', {
@@ -195,8 +197,7 @@ export async function POST(request: NextRequest) {
 
         const payappData = Object.fromEntries(new URLSearchParams(payappText));
 
-        if (payappData.state === '1') {
-          // 결제 요청 성공 → DB 업데이트
+        if (payappData.state === '1' && payappData.payurl) {
           await supabaseAdmin
             .from('practice_applications')
             .update({
@@ -205,6 +206,7 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', data.id);
 
+          payurl = payappData.payurl;
           console.log('[PAYAPP] 결제 요청 성공 mul_no:', payappData.mul_no);
         } else {
           console.error('[PAYAPP] 결제 요청 실패:', payappData.errorMessage);
@@ -223,7 +225,7 @@ export async function POST(request: NextRequest) {
         // payapp 오류 시에도 신청은 유지 (관리자가 수동 처리)
       }
     } else {
-      console.warn('[PAYAPP] PAYAPP_USERID 또는 PAYAPP_ENC_BILL 환경변수 미설정');
+      console.warn('[PAYAPP] PAYAPP_USERID 또는 PAYAPP_LINK_KEY 환경변수 미설정');
     }
 
     // Slack 알림 전송
@@ -283,7 +285,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: 'Practice application submitted successfully', data },
+      { message: 'Practice application submitted successfully', data, payurl },
       { status: 201 }
     );
   } catch (error) {
