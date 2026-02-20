@@ -119,13 +119,17 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
   const formatContact = (value: string) => {
     const cleaned = value.replace(/[^0-9]/g, "");
     if (cleaned.length <= 3) return cleaned;
-    if (cleaned.length <= 7) return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
+    if (cleaned.length <= 7)
+      return `${cleaned.slice(0, 3)}-${cleaned.slice(3)}`;
     return `${cleaned.slice(0, 3)}-${cleaned.slice(3, 7)}-${cleaned.slice(7, 11)}`;
   };
 
   const validateContact = (contact: string) => {
     const cleaned = contact.replace(/[-\s]/g, "");
-    if (cleaned.length === 0) { setContactError(""); return true; }
+    if (cleaned.length === 0) {
+      setContactError("");
+      return true;
+    }
     if (!cleaned.startsWith("010") && !cleaned.startsWith("011")) {
       setContactError("010 또는 011로 시작하는 번호를 입력해주세요");
       return false;
@@ -135,9 +139,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
   };
 
   const formatBirthDate = (value: string) => {
-    const cleaned = value.replace(/[^0-9]/g, "");
-    if (cleaned.length <= 6) return cleaned;
-    return `${cleaned.slice(0, 6)}-${cleaned.slice(6, 7)}`;
+    return value.replace(/[^0-9]/g, "").slice(0, 6);
   };
 
   const openAddressSearch = () => {
@@ -171,7 +173,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     showContact &&
     formData.contact.replace(/[-\s]/g, "").length >= 10 &&
     !contactError;
-  const showAddress = showBirthDate && formData.birth_date.length >= 7;
+  const showAddress = showBirthDate && formData.birth_date.length >= 6;
   const showPracticeType = showAddress && formData.address.length > 0;
   const showDesiredJobField =
     showPracticeType && formData.practice_type.length > 0;
@@ -187,7 +189,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     formData.name.trim().length > 0,
     formData.gender.length > 0,
     formData.contact.replace(/[-\s]/g, "").length >= 10 && !contactError,
-    formData.birth_date.length >= 7,
+    formData.birth_date.length >= 6,
     formData.address.length > 0,
     formData.practice_type.length > 0,
     formData.desired_job_field.trim().length > 0,
@@ -204,7 +206,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     formData.gender.length > 0 &&
     formData.contact.replace(/[-\s]/g, "").length >= 10 &&
     !contactError &&
-    formData.birth_date.length >= 7 &&
+    formData.birth_date.length >= 6 &&
     formData.address.length > 0 &&
     formData.practice_type.length > 0 &&
     formData.desired_job_field.trim().length > 0 &&
@@ -250,16 +252,17 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
       const responseData = await response.json();
 
       if (responseData.payurl) {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+          );
         if (isMobile) {
           window.location.href = responseData.payurl;
         } else {
           window.open(
             responseData.payurl,
             "payapp_payment",
-            "width=800,height=900,left=200,top=100"
+            "width=800,height=900,left=200,top=100",
           );
         }
       } else {
@@ -419,10 +422,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </label>
                   <input
                     type="text"
-                    placeholder="6자리 숫자 형식으로 입력해주세요 (ex. 820412-1)"
+                    placeholder="생년월일 6자리를 입력해주세요 (ex. YYMMDD(예: 730104))"
                     className={styles.inputField}
                     value={formData.birth_date}
-                    maxLength={8}
+                    maxLength={6}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -448,7 +451,14 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     className={styles.addressSearchBtn}
                     onClick={openAddressSearch}
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <circle cx="11" cy="11" r="8" />
                       <path d="m21 21-4.35-4.35" />
                     </svg>
@@ -471,7 +481,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                       style={{ marginTop: 8 }}
                       value={formData.address_detail}
                       onChange={(e) =>
-                        setFormData({ ...formData, address_detail: e.target.value })
+                        setFormData({
+                          ...formData,
+                          address_detail: e.target.value,
+                        })
                       }
                     />
                   )}
@@ -495,7 +508,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     className={styles.selectField}
                     value={formData.practice_type}
                     onChange={(e) =>
-                      setFormData({ ...formData, practice_type: e.target.value })
+                      setFormData({
+                        ...formData,
+                        practice_type: e.target.value,
+                      })
                     }
                   >
                     <option value="">유형을 선택하세요</option>
@@ -524,7 +540,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     className={styles.inputField}
                     value={formData.desired_job_field}
                     onChange={(e) =>
-                      setFormData({ ...formData, desired_job_field: e.target.value })
+                      setFormData({
+                        ...formData,
+                        desired_job_field: e.target.value,
+                      })
                     }
                   />
                 </motion.div>
@@ -564,7 +583,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   className={styles.inputGroup}
                 >
                   <label className={styles.inputLabel}>
-                    자기소개서·이력서 보유 여부<span className={styles.required}>*</span>
+                    자기소개서·이력서 보유 여부
+                    <span className={styles.required}>*</span>
                   </label>
                   <div className={styles.radioGroup}>
                     <label className={styles.radioLabel}>
@@ -574,7 +594,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                         value="보유함"
                         checked={formData.has_resume === "보유함"}
                         onChange={(e) =>
-                          setFormData({ ...formData, has_resume: e.target.value })
+                          setFormData({
+                            ...formData,
+                            has_resume: e.target.value,
+                          })
                         }
                         className={styles.radio}
                       />
@@ -587,7 +610,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                         value="보유하지않음"
                         checked={formData.has_resume === "보유하지않음"}
                         onChange={(e) =>
-                          setFormData({ ...formData, has_resume: e.target.value })
+                          setFormData({
+                            ...formData,
+                            has_resume: e.target.value,
+                          })
                         }
                         className={styles.radio}
                       />
@@ -611,7 +637,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     className={styles.inputField}
                     value={formData.certifications}
                     onChange={(e) =>
-                      setFormData({ ...formData, certifications: e.target.value })
+                      setFormData({
+                        ...formData,
+                        certifications: e.target.value,
+                      })
                     }
                   />
                 </motion.div>
@@ -644,7 +673,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                         >
                           개인정보처리방침
                         </button>{" "}
-                        동의 <span className={styles.requiredBadge}>(필수)</span>
+                        동의{" "}
+                        <span className={styles.requiredBadge}>(필수)</span>
                       </span>
                     </label>
 
@@ -704,7 +734,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 className={styles.step3Image}
               />
               <h1 className={styles.title}>
-                결제가 완료되었습니다.{"\n"}실습 섭외 신청이{"\n"}정상적으로 접수되었습니다.
+                결제가 완료되었습니다.{"\n"}실습 섭외 신청이{"\n"}정상적으로
+                접수되었습니다.
               </h1>
             </motion.div>
           )}
@@ -727,8 +758,20 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   onClick={() => setShowPrivacyModal(false)}
                   aria-label="닫기"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M18 6L6 18M6 6L18 18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
               </div>
@@ -736,20 +779,24 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 <div className={styles.modalPrivacyScroll}>
                   <p className={styles.modalPrivacyItem}>
                     <strong>1. 개인정보 수집 및 이용 목적</strong>
-                    실습 섭외 신청 처리, 실습처 배정 안내, 결제 처리 및 문의사항 응대.
-                    개인정보는 서비스 제공을 위한 목적으로만 수집 및 이용되며, 동의 없이 제3자에게 제공되지 않습니다.
+                    실습 섭외 신청 처리, 실습처 배정 안내, 결제 처리 및 문의사항
+                    응대. 개인정보는 서비스 제공을 위한 목적으로만 수집 및
+                    이용되며, 동의 없이 제3자에게 제공되지 않습니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>2. 수집 및 이용하는 개인정보 항목</strong>
-                    필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형, 취업 희망분야, 고용형태, 이력서 보유 여부
+                    필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형, 취업
+                    희망분야, 고용형태, 이력서 보유 여부
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>3. 보유 및 이용 기간</strong>
-                    법령이 정하는 경우를 제외하고는 수집일로부터 1년 또는 동의 철회 시까지 보유 및 이용합니다.
+                    법령이 정하는 경우를 제외하고는 수집일로부터 1년 또는 동의
+                    철회 시까지 보유 및 이용합니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>4. 동의 거부 권리</strong>
-                    신청자는 동의를 거부할 권리가 있습니다. 단, 동의를 거부하는 경우 서비스 이용이 제한됩니다.
+                    신청자는 동의를 거부할 권리가 있습니다. 단, 동의를 거부하는
+                    경우 서비스 이용이 제한됩니다.
                   </p>
                 </div>
               </div>
@@ -774,28 +821,44 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   onClick={() => setShowTermsModal(false)}
                   aria-label="닫기"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M18 6L6 18M6 6L18 18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
               </div>
               <div className={styles.modalPrivacyContent}>
                 <div className={styles.modalPrivacyScroll}>
                   <p className={styles.modalPrivacyItem}>
-                    <strong>제1조 (목적)</strong>
-                    본 약관은 한평생교육(이하 &quot;회사&quot;)이 제공하는 실습 섭외 신청 서비스의 이용 조건 및 절차에 관한 사항을 규정합니다.
+                    <strong>제1조 (목적)</strong>본 약관은 한평생교육(이하
+                    &quot;회사&quot;)이 제공하는 실습 섭외 신청 서비스의 이용
+                    조건 및 절차에 관한 사항을 규정합니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>제2조 (서비스 내용)</strong>
-                    회사는 사회복지사, 보육교사, 평생교육사, 한국어교원 등 자격 취득을 위한 실습 섭외 및 배정 서비스를 제공합니다.
+                    회사는 사회복지사, 보육교사, 평생교육사, 한국어교원 등 자격
+                    취득을 위한 실습 섭외 및 배정 서비스를 제공합니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>제3조 (이용자의 의무)</strong>
-                    이용자는 신청 시 정확한 정보를 입력해야 하며, 허위 정보 입력으로 발생하는 불이익에 대해 회사는 책임지지 않습니다.
+                    이용자는 신청 시 정확한 정보를 입력해야 하며, 허위 정보
+                    입력으로 발생하는 불이익에 대해 회사는 책임지지 않습니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>제4조 (서비스 변경 및 중단)</strong>
-                    회사는 운영상, 기술상의 필요에 따라 서비스를 변경하거나 중단할 수 있으며, 이 경우 사전에 공지합니다.
+                    회사는 운영상, 기술상의 필요에 따라 서비스를 변경하거나
+                    중단할 수 있으며, 이 경우 사전에 공지합니다.
                   </p>
                 </div>
               </div>
@@ -820,8 +883,20 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   onClick={() => setShowPaymentNoticeModal(false)}
                   aria-label="닫기"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M18 6L6 18M6 6L18 18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
               </div>
@@ -833,12 +908,13 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>환불 규정</strong>
-                    결제 후 실습처 배정 전: 전액 환불 가능
-                    실습처 배정 후: 환불 불가
+                    결제 후 실습처 배정 전: 전액 환불 가능 실습처 배정 후: 환불
+                    불가
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>결제 수단</strong>
-                    신용카드, 체크카드, 계좌이체 등 다양한 결제 수단을 지원합니다.
+                    신용카드, 체크카드, 계좌이체 등 다양한 결제 수단을
+                    지원합니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>영수증 발급</strong>
