@@ -44,6 +44,13 @@ export async function POST(request: NextRequest) {
       // Slack 알림
       if (process.env.SLACK_WEBHOOK_URL) {
         try {
+          // 신청자 정보 조회
+          const { data: appData } = await supabaseAdmin
+            .from('practice_applications')
+            .select('name, contact, practice_type')
+            .eq('id', var1)
+            .single();
+
           const payMethodMap: Record<string, string> = {
             card: '신용/체크카드',
             kakaopay: '카카오페이',
@@ -71,10 +78,12 @@ export async function POST(request: NextRequest) {
                 {
                   type: 'section',
                   fields: [
-                    { type: 'mrkdwn', text: `*결제번호:*\n${mul_no || '-'}` },
+                    { type: 'mrkdwn', text: `*이름:*\n${appData?.name || '-'}` },
+                    { type: 'mrkdwn', text: `*연락처:*\n${appData?.contact || '-'}` },
+                    { type: 'mrkdwn', text: `*실습 유형:*\n${appData?.practice_type || '-'}` },
                     { type: 'mrkdwn', text: `*결제금액:*\n${priceFormatted}원` },
                     { type: 'mrkdwn', text: `*결제수단:*\n${payMethodLabel}` },
-                    { type: 'mrkdwn', text: `*거래번호:*\n${tradeid || '-'}` },
+                    { type: 'mrkdwn', text: `*결제번호:*\n${mul_no || '-'}` },
                   ],
                 },
                 {
