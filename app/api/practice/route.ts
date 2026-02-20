@@ -171,6 +171,7 @@ export async function POST(request: NextRequest) {
           cmd: 'billPay',
           userid: process.env.PAYAPP_USERID,
           encBill: process.env.PAYAPP_ENC_BILL,
+          shopname: process.env.PAYAPP_SHOP_NAME || '한평생교육',
           goodname: `한평생교육 실습 섭외 신청 - ${practice_type}`,
           price: '110000',
           recvphone,
