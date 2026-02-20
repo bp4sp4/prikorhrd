@@ -24,21 +24,7 @@ async function handleResult(
         .eq('id', var1);
 
       console.log(`[PAYAPP RESULT] 결제 완료 - 신청 ID: ${var1}, mul_no: ${mul_no}, 금액: ${price}원`);
-
-      // Slack 알림
-      if (process.env.SLACK_WEBHOOK_URL) {
-        try {
-          await fetch(process.env.SLACK_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              text: `💳 *결제 완료* - 신청 ID: ${var1} | 결제번호: ${mul_no} | 금액: ${price}원`,
-            }),
-          });
-        } catch {
-          // Slack 알림 실패는 무시
-        }
-      }
+      // Slack 알림은 feedback(서버-서버)에서만 전송
     }
 
     // 성공 HTML: 팝업이면 부모 창을 step=3으로 이동 후 닫기, 모바일이면 직접 이동

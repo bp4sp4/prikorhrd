@@ -44,11 +44,49 @@ export async function POST(request: NextRequest) {
       // Slack 알림
       if (process.env.SLACK_WEBHOOK_URL) {
         try {
+          const payMethodMap: Record<string, string> = {
+            card: '신용/체크카드',
+            kakaopay: '카카오페이',
+            naverpay: '네이버페이',
+            payco: '페이코',
+            applepay: '애플페이',
+            myaccount: '내통장결제',
+          };
+          const payMethodLabel = paymethod ? (payMethodMap[paymethod] || paymethod) : '미확인';
+          const priceFormatted = price ? Number(price).toLocaleString('ko-KR') : '110,000';
+
           await fetch(process.env.SLACK_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              text: `💳 *결제 완료* - 신청 ID: ${var1} | 결제번호: ${mul_no} | 금액: ${price}원 | 수단: ${paymethod || '-'}`,
+              text: '💳 결제 완료',
+              blocks: [
+                {
+                  type: 'header',
+                  text: {
+                    type: 'plain_text',
+                    text: '💳 결제 완료',
+                  },
+                },
+                {
+                  type: 'section',
+                  fields: [
+                    { type: 'mrkdwn', text: `*결제번호:*\n${mul_no || '-'}` },
+                    { type: 'mrkdwn', text: `*결제금액:*\n${priceFormatted}원` },
+                    { type: 'mrkdwn', text: `*결제수단:*\n${payMethodLabel}` },
+                    { type: 'mrkdwn', text: `*거래번호:*\n${tradeid || '-'}` },
+                  ],
+                },
+                {
+                  type: 'context',
+                  elements: [
+                    {
+                      type: 'mrkdwn',
+                      text: `결제 시간: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
+                    },
+                  ],
+                },
+              ],
             }),
           });
         } catch {
