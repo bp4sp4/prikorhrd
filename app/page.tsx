@@ -422,7 +422,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </label>
                   <input
                     type="text"
-                    placeholder="생년월일 6자리를 입력해주세요 (ex. YYMMDD(예: 730104))"
+                    placeholder="생년월일 6자리를 입력(ex. YYMMDD(예: 730104))"
                     className={styles.inputField}
                     value={formData.birth_date}
                     maxLength={6}
