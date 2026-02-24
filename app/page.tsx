@@ -789,6 +789,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     <strong>2. 수집 및 이용하는 개인정보 항목</strong>
                     필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형, 취업
                     희망분야, 고용형태, 이력서 보유 여부
+                    <br />
+                    선택 - 상세주소, 보유중인 자격증
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>3. 보유 및 이용 기간</strong>
@@ -797,8 +799,17 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>4. 동의 거부 권리</strong>
-                    신청자는 동의를 거부할 권리가 있습니다. 단, 동의를 거부하는
-                    경우 서비스 이용이 제한됩니다.
+                    신청자는 동의를 거부할 권리가 있습니다. 단, 필수 항목에
+                    대한 동의를 거부하는 경우 서비스 이용이 제한됩니다. 선택
+                    항목에 대한 동의를 거부하더라도 서비스 이용에는 제한이
+                    없습니다.
+                  </p>
+                  <p className={styles.modalPrivacyItem}>
+                    <strong>5. 개인정보의 제3자 제공</strong>
+                    회사는 원칙적으로 이용자의 개인정보를 제3자에게 제공하지
+                    않습니다. 다만, 실습처 배정을 위해 해당 실습기관에 필요한
+                    최소한의 정보(이름, 연락처, 실습유형)를 제공할 수 있으며,
+                    이 경우 사전에 안내드립니다.
                   </p>
                 </div>
               </div>
