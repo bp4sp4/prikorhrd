@@ -44,10 +44,10 @@ export async function POST(request: NextRequest) {
       // Slack 알림
       if (process.env.SLACK_WEBHOOK_URL) {
         try {
-          // 신청자 정보 조회
+          // 신청자 전체 정보 조회
           const { data: appData } = await supabaseAdmin
             .from('practice_applications')
-            .select('name, contact, practice_type')
+            .select('*')
             .eq('id', var1)
             .single();
 
@@ -62,29 +62,44 @@ export async function POST(request: NextRequest) {
           const payMethodLabel = paymethod ? (payMethodMap[paymethod] || paymethod) : '미확인';
           const priceFormatted = price ? Number(price).toLocaleString('ko-KR') : '110,000';
 
+          const fields: { type: string; text: string }[] = [
+            { type: 'mrkdwn', text: `*이름:*\n${appData?.name || '-'}` },
+            { type: 'mrkdwn', text: `*연락처:*\n${appData?.contact || '-'}` },
+            { type: 'mrkdwn', text: `*성별:*\n${appData?.gender || '-'}` },
+            { type: 'mrkdwn', text: `*생년월일:*\n${appData?.birth_date || '-'}` },
+            { type: 'mrkdwn', text: `*주소:*\n${appData?.address || '-'}${appData?.address_detail ? ' ' + appData.address_detail : ''}` },
+            { type: 'mrkdwn', text: `*실습 유형:*\n${appData?.practice_type || '-'}` },
+            { type: 'mrkdwn', text: `*취업 희망분야:*\n${appData?.desired_job_field || '-'}` },
+            { type: 'mrkdwn', text: `*고용형태:*\n${appData?.employment_types?.join(', ') || '-'}` },
+            { type: 'mrkdwn', text: `*이력서 보유:*\n${appData?.has_resume ? '보유함' : '보유하지 않음'}` },
+            { type: 'mrkdwn', text: `*결제금액:*\n${priceFormatted}원` },
+          ];
+
+          if (appData?.certifications) {
+            fields.push({ type: 'mrkdwn', text: `*보유 자격증:*\n${appData.certifications}` });
+          }
+          if (appData?.click_source) {
+            fields.push({ type: 'mrkdwn', text: `*유입경로:*\n${appData.click_source}` });
+          }
+          fields.push({ type: 'mrkdwn', text: `*결제수단:*\n${payMethodLabel}` });
+          fields.push({ type: 'mrkdwn', text: `*결제번호:*\n${mul_no || '-'}` });
+
           await fetch(process.env.SLACK_WEBHOOK_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              text: '💳 결제 완료',
+              text: '💳 결제 완료 - 새로운 실습 섭외 신청',
               blocks: [
                 {
                   type: 'header',
                   text: {
                     type: 'plain_text',
-                    text: '💳 결제 완료',
+                    text: '💳 결제 완료 - 새로운 실습 섭외 신청',
                   },
                 },
                 {
                   type: 'section',
-                  fields: [
-                    { type: 'mrkdwn', text: `*이름:*\n${appData?.name || '-'}` },
-                    { type: 'mrkdwn', text: `*연락처:*\n${appData?.contact || '-'}` },
-                    { type: 'mrkdwn', text: `*실습 유형:*\n${appData?.practice_type || '-'}` },
-                    { type: 'mrkdwn', text: `*결제금액:*\n${priceFormatted}원` },
-                    { type: 'mrkdwn', text: `*결제수단:*\n${payMethodLabel}` },
-                    { type: 'mrkdwn', text: `*결제번호:*\n${mul_no || '-'}` },
-                  ],
+                  fields,
                 },
                 {
                   type: 'context',

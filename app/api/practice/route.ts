@@ -228,69 +228,6 @@ export async function POST(request: NextRequest) {
       console.warn('[PAYAPP] PAYAPP_USERID 또는 PAYAPP_LINK_KEY 환경변수 미설정');
     }
 
-    // Slack 알림 전송
-    if (process.env.SLACK_WEBHOOK_URL) {
-      try {
-        const fields: { type: string; text: string }[] = [
-          { type: 'mrkdwn', text: `*이름:*\n${name}` },
-          { type: 'mrkdwn', text: `*연락처:*\n${contact}` },
-          { type: 'mrkdwn', text: `*성별:*\n${gender}` },
-          { type: 'mrkdwn', text: `*생년월일:*\n${birth_date}` },
-          { type: 'mrkdwn', text: `*주소:*\n${address}${address_detail ? ' ' + address_detail : ''}` },
-          { type: 'mrkdwn', text: `*실습 유형:*\n${practice_type}` },
-          { type: 'mrkdwn', text: `*취업 희망분야:*\n${desired_job_field}` },
-          { type: 'mrkdwn', text: `*고용형태:*\n${employment_types.join(', ')}` },
-          { type: 'mrkdwn', text: `*이력서 보유:*\n${has_resume ? '보유함' : '보유하지 않음'}` },
-          { type: 'mrkdwn', text: `*결제금액:*\n110,000원` },
-        ];
-
-        if (certifications) {
-          fields.push({ type: 'mrkdwn', text: `*보유 자격증:*\n${certifications}` });
-        }
-        if (click_source) {
-          fields.push({ type: 'mrkdwn', text: `*유입경로:*\n${click_source}` });
-        }
-
-        const slackMessage = {
-          text: '📝 새로운 실습 섭외 신청이 접수되었습니다',
-          blocks: [
-            {
-              type: 'header',
-              text: {
-                type: 'plain_text',
-                text: '📝 새로운 실습 섭외 신청',
-              },
-            },
-            {
-              type: 'section',
-              fields,
-            },
-            {
-              type: 'context',
-              elements: [
-                {
-                  type: 'mrkdwn',
-                  text: `접수 시간: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
-                },
-              ],
-            },
-          ],
-        };
-
-        const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(slackMessage),
-        });
-
-        if (!slackResponse.ok) {
-          console.error('[SLACK] 알림 전송 실패:', await slackResponse.text());
-        }
-      } catch (slackError) {
-        console.error('[SLACK] 알림 전송 중 오류:', slackError);
-      }
-    }
-
     return NextResponse.json(
       { message: 'Practice application submitted successfully', data, payurl },
       { status: 201 }

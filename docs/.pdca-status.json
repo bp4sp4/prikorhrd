@@ -1,9 +1,53 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-23T03:13:08.412Z",
-  "activeFeatures": [],
-  "primaryFeature": null,
-  "features": {},
+  "lastUpdated": "2026-02-24T05:21:12.085Z",
+  "activeFeatures": [
+    "korhrdsocialpri",
+    "practice",
+    "feedback"
+  ],
+  "primaryFeature": "korhrdsocialpri",
+  "features": {
+    "korhrdsocialpri": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-24T05:20:35.267Z",
+        "lastUpdated": "2026-02-24T05:20:35.267Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/korhrdsocialpri/app/page.tsx"
+    },
+    "practice": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-24T05:20:52.997Z",
+        "lastUpdated": "2026-02-24T05:20:52.997Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/korhrdsocialpri/app/api/practice/route.ts"
+    },
+    "feedback": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-24T05:21:12.084Z",
+        "lastUpdated": "2026-02-24T05:21:12.084Z"
+      },
+      "lastFile": "/Users/korhrd/Documents/GitHub/korhrdsocialpri/app/api/payapp/feedback/route.ts"
+    }
+  },
   "pipeline": {
     "currentPhase": 1,
     "level": "Dynamic",
@@ -12,7 +56,26 @@
   "session": {
     "startedAt": "2026-02-23T03:13:08.412Z",
     "onboardingCompleted": false,
-    "lastActivity": "2026-02-23T03:13:08.412Z"
+    "lastActivity": "2026-02-24T05:21:12.085Z"
   },
-  "history": []
+  "history": [
+    {
+      "timestamp": "2026-02-24T05:20:35.267Z",
+      "feature": "korhrdsocialpri",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T05:20:52.997Z",
+      "feature": "practice",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-24T05:21:12.085Z",
+      "feature": "feedback",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
 }
