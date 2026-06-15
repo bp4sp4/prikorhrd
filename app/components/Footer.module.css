@@ -4,9 +4,8 @@
   border-top: 1px solid #e9ecef;
   padding: 5.5rem 1rem;
   margin-top: auto;
-max-width: 640px;
-margin: 0 auto;
-
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .footerContent {
@@ -14,7 +13,7 @@ margin: 0 auto;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  
+
   gap: 0.5rem;
   padding: 0 1rem;
 }
@@ -26,8 +25,8 @@ margin: 0 auto;
 }
 
 .logoText img {
-  height: 40px;
-  width: auto;
+  height: auto;
+  width: 140px;
 }
 
 .logoCheck {
@@ -103,29 +102,29 @@ margin: 0 auto;
   .footer {
     padding: 2rem 1rem;
   }
-  
+
   .footerContent {
     gap: 1.2rem;
   }
-  
+
   .logoText {
     font-size: 1.1rem;
   }
-  
+
   .logoCheck {
     width: 24px;
     height: 24px;
     font-size: 16px;
   }
-  
+
   .infoLine {
     font-size: 0.8rem;
   }
-  
+
   .footerLink {
     font-size: 0.8rem;
   }
-  
+
   .copyright {
     font-size: 0.75rem;
   }
@@ -135,25 +134,25 @@ margin: 0 auto;
   .footer {
     padding: 1.5rem 0.75rem;
   }
-  
+
   .logoText {
     font-size: 1rem;
   }
-  
+
   .logoCheck {
     width: 22px;
     height: 22px;
     font-size: 14px;
   }
-  
+
   .infoLine {
     font-size: 0.75rem;
   }
-  
+
   .footerLink {
     font-size: 0.75rem;
   }
-  
+
   .copyright {
     font-size: 0.7rem;
   }

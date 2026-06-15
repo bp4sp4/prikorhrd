@@ -41,6 +41,12 @@ export async function POST(request: NextRequest) {
 
       console.log(`[PAYAPP FEEDBACK] 결제 완료 처리 - 신청 ID: ${var1}, mul_no: ${mul_no}, 금액: ${price}원`);
 
+      // 어드민 실습신청자 목록 상태 → 입금완료
+      await supabaseAdmin
+        .from('practice_applicants')
+        .update({ status: '입금완료' })
+        .eq('source_application_id', var1);
+
       // Slack 알림
       if (process.env.SLACK_WEBHOOK_URL) {
         try {
@@ -60,7 +66,7 @@ export async function POST(request: NextRequest) {
             myaccount: '내통장결제',
           };
           const payMethodLabel = paymethod ? (payMethodMap[paymethod] || paymethod) : '미확인';
-          const priceFormatted = price ? Number(price).toLocaleString('ko-KR') : '110,000';
+          const priceFormatted = price ? Number(price).toLocaleString('ko-KR') : '33,000';
 
           const slackRes = await fetch(process.env.SLACK_WEBHOOK_URL, {
             method: 'POST',

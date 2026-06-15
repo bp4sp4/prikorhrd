@@ -81,8 +81,6 @@ const PRACTICE_TYPES = [
   "한국어교원 실습",
 ];
 
-const EMPLOYMENT_TYPES = ["정규직", "계약직", "파트타임", "부업"];
-
 function PracticeFormContent({ clickSource }: { clickSource: string }) {
   const [step, setStep] = useState(2);
   const [formData, setFormData] = useState({
@@ -94,9 +92,6 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     address_detail: "",
     zonecode: "",
     practice_type: "",
-    desired_job_field: "",
-    employment_types: [] as string[],
-    has_resume: "",
     certifications: "",
   });
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
@@ -157,24 +152,12 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     }
   };
 
-  const toggleEmploymentType = (type: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      employment_types: prev.employment_types.includes(type)
-        ? prev.employment_types.filter((t) => t !== type)
-        : [...prev.employment_types, type],
-    }));
-  };
-
   // 모든 필드 한번에 표시
   const showGender = true;
   const showContact = true;
   const showBirthDate = true;
   const showAddress = true;
   const showPracticeType = true;
-  const showDesiredJobField = true;
-  const showEmploymentTypes = true;
-  const showHasResume = true;
   const showCertifications = true;
   const showPayment = true;
 
@@ -186,13 +169,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     formData.birth_date.length >= 6,
     formData.address.length > 0,
     formData.practice_type.length > 0,
-    formData.desired_job_field.trim().length > 0,
-    formData.employment_types.length > 0,
-    formData.has_resume.length > 0,
     privacyAgreed,
     termsAgreed,
   ].filter(Boolean).length;
-  const totalFields = 11;
+  const totalFields = 8;
   const progress = (filledFields / totalFields) * 100;
 
   const isFormValid =
@@ -203,9 +183,6 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     formData.birth_date.length >= 6 &&
     formData.address.length > 0 &&
     formData.practice_type.length > 0 &&
-    formData.desired_job_field.trim().length > 0 &&
-    formData.employment_types.length > 0 &&
-    formData.has_resume.length > 0 &&
     privacyAgreed &&
     termsAgreed;
 
@@ -222,11 +199,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
         address_detail: formData.address_detail || null,
         zonecode: formData.zonecode || null,
         practice_type: formData.practice_type,
-        desired_job_field: formData.desired_job_field,
-        employment_types: formData.employment_types,
-        has_resume: formData.has_resume === "보유함",
         certifications: formData.certifications || null,
-        payment_amount: 110000,
+        payment_amount: 33000,
         privacy_agreed: privacyAgreed,
         terms_agreed: termsAgreed,
         click_source: clickSource,
@@ -518,105 +492,6 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 </motion.div>
               )}
 
-              {/* 취업 희망분야 */}
-              {showDesiredJobField && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={styles.inputGroup}
-                >
-                  <label className={styles.inputLabel}>
-                    취업 희망분야<span className={styles.required}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="취업 희망 분야를 작성해주세요(ex. 노인복지)"
-                    className={styles.inputField}
-                    value={formData.desired_job_field}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        desired_job_field: e.target.value,
-                      })
-                    }
-                  />
-                </motion.div>
-              )}
-
-              {/* 고용형태 */}
-              {showEmploymentTypes && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={styles.inputGroup}
-                >
-                  <label className={styles.inputLabel}>
-                    고용형태<span className={styles.required}>*</span>
-                  </label>
-                  <div className={styles.checkboxGroup}>
-                    {EMPLOYMENT_TYPES.map((type) => (
-                      <label key={type} className={styles.checkboxItem}>
-                        <input
-                          type="checkbox"
-                          checked={formData.employment_types.includes(type)}
-                          onChange={() => toggleEmploymentType(type)}
-                          className={styles.checkbox}
-                        />
-                        <span>{type}</span>
-                      </label>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-
-              {/* 자기소개서·이력서 보유 여부 */}
-              {showHasResume && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={styles.inputGroup}
-                >
-                  <label className={styles.inputLabel}>
-                    자기소개서·이력서 보유 여부
-                    <span className={styles.required}>*</span>
-                  </label>
-                  <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="has_resume"
-                        value="보유함"
-                        checked={formData.has_resume === "보유함"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            has_resume: e.target.value,
-                          })
-                        }
-                        className={styles.radio}
-                      />
-                      <span>보유함</span>
-                    </label>
-                    <label className={styles.radioLabel}>
-                      <input
-                        type="radio"
-                        name="has_resume"
-                        value="보유하지않음"
-                        checked={formData.has_resume === "보유하지않음"}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            has_resume: e.target.value,
-                          })
-                        }
-                        className={styles.radio}
-                      />
-                      <span>보유하지 않음</span>
-                    </label>
-                  </div>
-                </motion.div>
-              )}
-
               {/* 보유중인 자격증 */}
               {showCertifications && (
                 <motion.div
@@ -648,7 +523,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 >
                   <div className={styles.paymentBox}>
                     <span className={styles.paymentLabel}>결제 금액</span>
-                    <span className={styles.paymentAmount}>110,000원</span>
+                    <span className={styles.paymentAmount}>33,000원</span>
                   </div>
 
                   <div className={styles.agreementSection}>
@@ -781,8 +656,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>2. 수집 및 이용하는 개인정보 항목</strong>
-                    필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형, 취업
-                    희망분야, 고용형태, 이력서 보유 여부
+                    필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형
                     <br />
                     선택 - 상세주소, 보유중인 자격증
                   </p>
@@ -793,17 +667,16 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>4. 동의 거부 권리</strong>
-                    신청자는 동의를 거부할 권리가 있습니다. 단, 필수 항목에
-                    대한 동의를 거부하는 경우 서비스 이용이 제한됩니다. 선택
-                    항목에 대한 동의를 거부하더라도 서비스 이용에는 제한이
-                    없습니다.
+                    신청자는 동의를 거부할 권리가 있습니다. 단, 필수 항목에 대한
+                    동의를 거부하는 경우 서비스 이용이 제한됩니다. 선택 항목에
+                    대한 동의를 거부하더라도 서비스 이용에는 제한이 없습니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>5. 개인정보의 제3자 제공</strong>
                     회사는 원칙적으로 이용자의 개인정보를 제3자에게 제공하지
                     않습니다. 다만, 실습처 배정을 위해 해당 실습기관에 필요한
-                    최소한의 정보(이름, 연락처, 실습유형)를 제공할 수 있으며,
-                    이 경우 사전에 안내드립니다.
+                    최소한의 정보(이름, 연락처, 실습유형)를 제공할 수 있으며, 이
+                    경우 사전에 안내드립니다.
                   </p>
                 </div>
               </div>
@@ -911,7 +784,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 <div className={styles.modalPrivacyScroll}>
                   <p className={styles.modalPrivacyItem}>
                     <strong>결제 안내</strong>
-                    실습 섭외 신청 비용은 110,000원입니다.
+                    실습 섭외 신청 비용은 33,000원입니다.
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>환불 규정</strong>

@@ -38,7 +38,7 @@ export default function Footer() {
             </Link>
           </div>
           <p className={styles.copyright}>
-            2026 © BaroCompany (KORHRD Partners). All rights reserved.
+            2026 © KorhrdGroup. All rights reserved.
           </p>
         </div>
       </div>

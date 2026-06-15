@@ -62,9 +62,6 @@ export async function POST(request: NextRequest) {
       address_detail,
       zonecode,
       practice_type,
-      desired_job_field,
-      employment_types,
-      has_resume,
       certifications,
       payment_amount,
       privacy_agreed,
@@ -79,12 +76,7 @@ export async function POST(request: NextRequest) {
       !contact ||
       !birth_date ||
       !address ||
-      !practice_type ||
-      !desired_job_field ||
-      !employment_types ||
-      !Array.isArray(employment_types) ||
-      employment_types.length === 0 ||
-      typeof has_resume !== 'boolean'
+      !practice_type
     ) {
       return NextResponse.json(
         { error: 'All required fields must be filled' },
@@ -112,17 +104,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 고용형태 검증
-    const validEmploymentTypes = ['정규직', '계약직', '파트타임', '부업'];
-    const invalidTypes = employment_types.filter(
-      (t: string) => !validEmploymentTypes.includes(t)
-    );
-    if (invalidTypes.length > 0) {
-      return NextResponse.json(
-        { error: 'Invalid employment type' },
-        { status: 400 }
-      );
-    }
+    // 실습유형 → 분류(category): 사회복지사 / 그 외(보육·평생교육사·한국어교원) = 타과정
+    const category = practice_type.includes('사회복지사')
+      ? '사회복지사'
+      : '타과정';
 
     const { data, error } = await supabaseAdmin
       .from('practice_applications')
@@ -136,11 +121,9 @@ export async function POST(request: NextRequest) {
           address_detail: address_detail || null,
           zonecode: zonecode || null,
           practice_type,
-          desired_job_field,
-          employment_types,
-          has_resume,
+          category,
           certifications: certifications || null,
-          payment_amount: payment_amount || 110000,
+          payment_amount: payment_amount || 33000,
           payment_status: 'pending',
           privacy_agreed: privacy_agreed || false,
           terms_agreed: terms_agreed || false,
@@ -154,9 +137,28 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Error saving practice application:', error);
       return NextResponse.json(
-        { error: 'Failed to save practice application' },
+        { error: 'Failed to save practice application', details: error.message },
         { status: 500 }
       );
+    }
+
+    // 어드민 실습신청자 목록(practice_applicants)에도 매핑 행 생성 (분류별 페이지 노출)
+    // 결제 완료되면 feedback 에서 상태를 '입금완료' 로 갱신.
+    try {
+      await supabaseAdmin.from('practice_applicants').insert({
+        source_application_id: data.id,
+        category,
+        name,
+        contact,
+        birth_date,
+        address,
+        practice_type,
+        certifications: certifications || null,
+        amount: payment_amount || 33000,
+        status: '추후진행예정',
+      });
+    } catch (syncErr) {
+      console.error('[practice_applicants] 동기화 실패(신청은 유지):', syncErr);
     }
 
     // payapp 링크결제(payrequest) API 호출
@@ -172,7 +174,7 @@ export async function POST(request: NextRequest) {
           linkkey: process.env.PAYAPP_LINK_KEY,
           shopname: process.env.PAYAPP_SHOP_NAME || '한평생교육',
           goodname: `한평생교육 실습 섭외 신청 - ${practice_type}`,
-          price: '110000',
+          price: '33000',
           recvphone,
           memo: name,
           feedbackurl: `${baseUrl}/api/payapp/feedback`,
@@ -181,9 +183,9 @@ export async function POST(request: NextRequest) {
           skip_cstpage: 'y',
           smsuse: 'n',
           openpaytype: 'card,kakaopay,naverpay,payco,applepay,myaccount',
-          amount_taxable: '100000',
+          amount_taxable: '30000',
           amount_taxfree: '0',
-          amount_vat: '10000',
+          amount_vat: '3000',
         });
 
         const payappRes = await fetch('https://api.payapp.kr/oapi/apiLoad.html', {
@@ -235,7 +237,10 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error saving practice application:', error);
     return NextResponse.json(
-      { error: 'Failed to save practice application' },
+      {
+        error: 'Failed to save practice application',
+        details: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 }
     );
   }
