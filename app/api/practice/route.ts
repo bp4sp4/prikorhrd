@@ -123,6 +123,7 @@ export async function POST(request: NextRequest) {
           practice_type,
           category,
           certifications: certifications || null,
+          manager: "한지연",
           payment_amount: payment_amount || 33000,
           payment_status: "pending",
           privacy_agreed: privacy_agreed || false,
@@ -157,6 +158,7 @@ export async function POST(request: NextRequest) {
         address,
         practice_type,
         certifications: certifications || null,
+        manager: "한지연",
         amount: payment_amount || 33000,
         status: "추후진행예정",
       });
