@@ -25,11 +25,15 @@ export async function POST(request: NextRequest) {
 
     if (state === '1' || (state === null && mul_no)) {
       // 결제 성공 → DB 업데이트
+      // 페이앱 결제수단 → 매출파일 결제방법: 내통장결제=페이앱 계좌이체, 그 외=카드결제
+      const salesMethod =
+        paymethod === 'myaccount' ? 'payapp_transfer' : 'card';
       const { error } = await supabaseAdmin
         .from('practice_applications')
         .update({
           payment_status: 'paid',
           payment_id: mul_no || undefined,
+          payment_method: salesMethod,
           status: 'confirmed',
         })
         .eq('id', var1);

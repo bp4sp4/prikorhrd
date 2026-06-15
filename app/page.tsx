@@ -259,7 +259,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
           <div className={styles.logoContainer}>
             <Image
               src="/logo.png"
-              alt="한평생교육"
+              alt="한평생그룹"
               width={130}
               height={34}
               className={styles.logo}
@@ -721,7 +721,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
               <div className={styles.modalPrivacyContent}>
                 <div className={styles.modalPrivacyScroll}>
                   <p className={styles.modalPrivacyItem}>
-                    <strong>제1조 (목적)</strong>본 약관은 한평생교육(이하
+                    <strong>제1조 (목적)</strong>본 약관은 한평생그룹(이하
                     &quot;회사&quot;)이 제공하는 실습 섭외 신청 서비스의 이용
                     조건 및 절차에 관한 사항을 규정합니다.
                   </p>
