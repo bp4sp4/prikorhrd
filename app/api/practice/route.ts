@@ -138,10 +138,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error("Error saving practice application:", error);
       return NextResponse.json(
-        {
-          error: "Failed to save practice application",
-          details: error.message,
-        },
+        { error: "Failed to save practice application" },
         { status: 500 },
       );
     }
@@ -254,10 +251,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error saving practice application:", error);
     return NextResponse.json(
-      {
-        error: "Failed to save practice application",
-        details: error instanceof Error ? error.message : String(error),
-      },
+      { error: "Failed to save practice application" },
       { status: 500 },
     );
   }
