@@ -61,8 +61,12 @@ export async function POST(request: NextRequest) {
       address,
       address_detail,
       zonecode,
+      desired_date,
+      desired_semester,
       practice_type,
-      certifications,
+      desired_weekday,
+      own_car,
+      manager,
       payment_amount,
       privacy_agreed,
       terms_agreed,
@@ -76,7 +80,13 @@ export async function POST(request: NextRequest) {
       !contact ||
       !birth_date ||
       !address ||
-      !practice_type
+      !address_detail ||
+      !desired_date ||
+      !desired_semester ||
+      !practice_type ||
+      !desired_weekday ||
+      !own_car ||
+      !manager
     ) {
       return NextResponse.json(
         { error: "All required fields must be filled" },
@@ -87,6 +97,11 @@ export async function POST(request: NextRequest) {
     // 성별 검증
     if (!["남", "여"].includes(gender)) {
       return NextResponse.json({ error: "Invalid gender" }, { status: 400 });
+    }
+
+    // 자차 사용 여부 검증
+    if (!["O", "X"].includes(own_car)) {
+      return NextResponse.json({ error: "Invalid own_car" }, { status: 400 });
     }
 
     // 실습 유형 검증
@@ -120,10 +135,13 @@ export async function POST(request: NextRequest) {
           address,
           address_detail: address_detail || null,
           zonecode: zonecode || null,
+          desired_date,
+          desired_semester,
           practice_type,
+          desired_weekday,
+          own_car,
           category,
-          certifications: certifications || null,
-          manager: "한지연",
+          manager,
           payment_amount: payment_amount || 33000,
           payment_status: "pending",
           privacy_agreed: privacy_agreed || false,
@@ -146,16 +164,23 @@ export async function POST(request: NextRequest) {
     // 어드민 실습신청자 목록(practice_applicants)에도 매핑 행 생성 (분류별 페이지 노출)
     // 결제 완료되면 feedback 에서 상태를 '입금완료' 로 갱신.
     try {
+      const fullAddress = address_detail
+        ? `${address} ${address_detail}`
+        : address;
       await supabaseAdmin.from("practice_applicants").insert({
         source_application_id: data.id,
         category,
         name,
+        gender,
         contact,
         birth_date,
-        address,
+        address: fullAddress,
+        desired_date,
+        desired_semester,
         practice_type,
-        certifications: certifications || null,
-        manager: "한지연",
+        desired_weekday,
+        own_car,
+        manager,
         amount: payment_amount || 33000,
         status: "추후진행예정",
       });

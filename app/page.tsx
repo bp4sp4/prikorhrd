@@ -81,6 +81,16 @@ const PRACTICE_TYPES = [
   "한국어교원 실습",
 ];
 
+// 현장실습 희망날짜: 년/월 선택 (DB 포맷 "25년 06월"에 맞춤)
+const DESIRED_YEAR_OPTIONS = ["25년", "26년", "27년", "28년"];
+const DESIRED_MONTH_OPTIONS = Array.from(
+  { length: 12 },
+  (_, i) => `${String(i + 1).padStart(2, "0")}월`,
+);
+
+// 실습 진행일
+const WEEKDAY_OPTIONS = ["평일", "주말", "평일+주말"];
+
 function PracticeFormContent({ clickSource }: { clickSource: string }) {
   const [step, setStep] = useState(2);
   const [formData, setFormData] = useState({
@@ -91,8 +101,14 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     address: "",
     address_detail: "",
     zonecode: "",
+    desired_year: "",
+    desired_month: "",
+    desired_date: "",
+    desired_semester: "",
     practice_type: "",
-    certifications: "",
+    desired_weekday: "",
+    own_car: "",
+    manager: "",
   });
   const [privacyAgreed, setPrivacyAgreed] = useState(false);
   const [termsAgreed, setTermsAgreed] = useState(false);
@@ -158,33 +174,30 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
   const showBirthDate = true;
   const showAddress = true;
   const showPracticeType = true;
-  const showCertifications = true;
   const showPayment = true;
 
-  // 프로그레스 바 계산
-  const filledFields = [
+  // 프로그레스 바 계산 (모든 항목 필수)
+  const requiredChecks = [
     formData.name.trim().length > 0,
     formData.gender.length > 0,
     formData.contact.replace(/[-\s]/g, "").length >= 10 && !contactError,
     formData.birth_date.length >= 6,
     formData.address.length > 0,
+    formData.address_detail.trim().length > 0,
+    formData.desired_date.trim().length > 0,
+    formData.desired_semester.trim().length > 0,
     formData.practice_type.length > 0,
+    formData.desired_weekday.trim().length > 0,
+    formData.own_car.length > 0,
+    formData.manager.trim().length > 0,
     privacyAgreed,
     termsAgreed,
-  ].filter(Boolean).length;
-  const totalFields = 8;
+  ];
+  const filledFields = requiredChecks.filter(Boolean).length;
+  const totalFields = requiredChecks.length;
   const progress = (filledFields / totalFields) * 100;
 
-  const isFormValid =
-    formData.name.trim().length > 0 &&
-    formData.gender.length > 0 &&
-    formData.contact.replace(/[-\s]/g, "").length >= 10 &&
-    !contactError &&
-    formData.birth_date.length >= 6 &&
-    formData.address.length > 0 &&
-    formData.practice_type.length > 0 &&
-    privacyAgreed &&
-    termsAgreed;
+  const isFormValid = requiredChecks.every(Boolean);
 
   const handleSubmit = async () => {
     if (!isFormValid) return;
@@ -198,8 +211,12 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
         address: formData.address,
         address_detail: formData.address_detail || null,
         zonecode: formData.zonecode || null,
+        desired_date: formData.desired_date,
+        desired_semester: formData.desired_semester,
         practice_type: formData.practice_type,
-        certifications: formData.certifications || null,
+        desired_weekday: formData.desired_weekday,
+        own_car: formData.own_car,
+        manager: formData.manager,
         payment_amount: 33000,
         privacy_agreed: privacyAgreed,
         terms_agreed: termsAgreed,
@@ -404,7 +421,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 </motion.div>
               )}
 
-              {/* 주소 */}
+              {/* 거주지 */}
               {showAddress && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -412,7 +429,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   className={styles.inputGroup}
                 >
                   <label className={styles.inputLabel}>
-                    주소<span className={styles.required}>*</span>
+                    거주지<span className={styles.required}>*</span>
                   </label>
                   <button
                     type="button"
@@ -434,7 +451,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </button>
                   <input
                     type="text"
-                    placeholder="주소를 검색해주세요"
+                    placeholder="거주지 주소를 검색해주세요"
                     className={styles.inputField}
                     value={formData.address}
                     readOnly
@@ -444,7 +461,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   {formData.address && (
                     <input
                       type="text"
-                      placeholder="상세 주소를 입력해주세요"
+                      placeholder="상세 주소를 입력해주세요 (동/호수 등)"
                       className={styles.inputField}
                       style={{ marginTop: 8 }}
                       value={formData.address_detail}
@@ -462,7 +479,89 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 </motion.div>
               )}
 
-              {/* 실습 유형 */}
+              {/* 현장실습 희망날짜 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  현장실습 희망날짜<span className={styles.required}>*</span>
+                </label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select
+                    className={styles.selectField}
+                    style={{ flex: 1 }}
+                    value={formData.desired_year}
+                    onChange={(e) => {
+                      const desired_year = e.target.value;
+                      setFormData({
+                        ...formData,
+                        desired_year,
+                        desired_date:
+                          desired_year && formData.desired_month
+                            ? `${desired_year} ${formData.desired_month}`
+                            : "",
+                      });
+                    }}
+                  >
+                    <option value="">년도</option>
+                    {DESIRED_YEAR_OPTIONS.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className={styles.selectField}
+                    style={{ flex: 1 }}
+                    value={formData.desired_month}
+                    onChange={(e) => {
+                      const desired_month = e.target.value;
+                      setFormData({
+                        ...formData,
+                        desired_month,
+                        desired_date:
+                          formData.desired_year && desired_month
+                            ? `${formData.desired_year} ${desired_month}`
+                            : "",
+                      });
+                    }}
+                  >
+                    <option value="">월</option>
+                    {DESIRED_MONTH_OPTIONS.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </motion.div>
+
+              {/* 신청 학기 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  신청 학기<span className={styles.required}>*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="예) 26년도 2학기"
+                  className={styles.inputField}
+                  value={formData.desired_semester}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      desired_semester: e.target.value,
+                    })
+                  }
+                />
+              </motion.div>
+
+              {/* 실습 진행시간 */}
               {showPracticeType && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -470,7 +569,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   className={styles.inputGroup}
                 >
                   <label className={styles.inputLabel}>
-                    실습 유형<span className={styles.required}>*</span>
+                    실습 진행시간<span className={styles.required}>*</span>
                   </label>
                   <select
                     className={styles.selectField}
@@ -482,7 +581,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                       })
                     }
                   >
-                    <option value="">유형을 선택하세요</option>
+                    <option value="">실습 진행시간을 선택하세요</option>
                     {PRACTICE_TYPES.map((type) => (
                       <option key={type} value={type}>
                         {type}
@@ -492,28 +591,92 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 </motion.div>
               )}
 
-              {/* 보유중인 자격증 */}
-              {showCertifications && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={styles.inputGroup}
+              {/* 실습 진행일 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  실습 진행일<span className={styles.required}>*</span>
+                </label>
+                <select
+                  className={styles.selectField}
+                  value={formData.desired_weekday}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      desired_weekday: e.target.value,
+                    })
+                  }
                 >
-                  <label className={styles.inputLabel}>보유중인 자격증</label>
-                  <input
-                    type="text"
-                    placeholder="취득하신 자격증이 있다면 작성해주세요"
-                    className={styles.inputField}
-                    value={formData.certifications}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        certifications: e.target.value,
-                      })
-                    }
-                  />
-                </motion.div>
-              )}
+                  <option value="">실습 진행일을 선택하세요</option>
+                  {WEEKDAY_OPTIONS.map((w) => (
+                    <option key={w} value={w}>
+                      {w}
+                    </option>
+                  ))}
+                </select>
+              </motion.div>
+
+              {/* 자차 사용 여부 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  자차 사용 여부<span className={styles.required}>*</span>
+                </label>
+                <div className={styles.radioGroup}>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="own_car"
+                      value="O"
+                      checked={formData.own_car === "O"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, own_car: e.target.value })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>사용 (O)</span>
+                  </label>
+                  <label className={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      name="own_car"
+                      value="X"
+                      checked={formData.own_car === "X"}
+                      onChange={(e) =>
+                        setFormData({ ...formData, own_car: e.target.value })
+                      }
+                      className={styles.radio}
+                    />
+                    <span>미사용 (X)</span>
+                  </label>
+                </div>
+              </motion.div>
+
+              {/* 담당자 성함 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  담당자 성함<span className={styles.required}>*</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="담당자 성함을 입력해주세요"
+                  className={styles.inputField}
+                  value={formData.manager}
+                  onChange={(e) =>
+                    setFormData({ ...formData, manager: e.target.value })
+                  }
+                />
+              </motion.div>
 
               {/* 결제 금액 + 동의 + 버튼 */}
               {showPayment && (
@@ -656,9 +819,9 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>2. 수집 및 이용하는 개인정보 항목</strong>
-                    필수 - 이름, 성별, 연락처, 생년월일, 주소, 실습유형
-                    <br />
-                    선택 - 상세주소, 보유중인 자격증
+                    필수 - 이름, 성별, 연락처, 생년월일, 거주지(상세주소 포함),
+                    현장실습 희망날짜, 신청 학기, 실습 진행시간, 실습 진행일, 자차
+                    사용 여부, 담당자 성함
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>3. 보유 및 이용 기간</strong>
