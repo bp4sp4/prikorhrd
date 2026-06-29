@@ -536,6 +536,12 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                     ))}
                   </select>
                 </div>
+                <p className={styles.addressNote} style={{ color: "#6b7280" }}>
+                  ※ 원하는 날짜로 알아보는데 부득이하게 실습생 모집하는 곳이
+                  없다면
+                  <br />
+                  인근 지역으로 연계해드리거나 희망 월이 바뀔 수 있습니다
+                </p>
               </motion.div>
 
               {/* 신청 학기 */}
@@ -820,8 +826,8 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                   <p className={styles.modalPrivacyItem}>
                     <strong>2. 수집 및 이용하는 개인정보 항목</strong>
                     필수 - 이름, 성별, 연락처, 생년월일, 거주지(상세주소 포함),
-                    현장실습 희망날짜, 신청 학기, 실습 진행시간, 실습 진행일, 자차
-                    사용 여부, 담당자 성함
+                    현장실습 희망날짜, 신청 학기, 실습 진행시간, 실습 진행일,
+                    자차 사용 여부, 담당자 성함
                   </p>
                   <p className={styles.modalPrivacyItem}>
                     <strong>3. 보유 및 이용 기간</strong>
