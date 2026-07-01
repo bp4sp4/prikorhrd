@@ -88,6 +88,12 @@ const DESIRED_MONTH_OPTIONS = Array.from(
   (_, i) => `${String(i + 1).padStart(2, "0")}월`,
 );
 
+// 성적보고일: 년/월/일 선택 (DB 포맷 "26년 06월 15일")
+const REPORT_DAY_OPTIONS = Array.from(
+  { length: 31 },
+  (_, i) => `${String(i + 1).padStart(2, "0")}일`,
+);
+
 // 실습 진행일
 const WEEKDAY_OPTIONS = ["평일", "주말", "평일+주말"];
 
@@ -105,6 +111,10 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     desired_month: "",
     desired_date: "",
     desired_semester: "",
+    report_year: "",
+    report_month: "",
+    report_day: "",
+    report_date: "",
     practice_type: "",
     desired_weekday: "",
     own_car: "",
@@ -186,6 +196,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
     formData.address_detail.trim().length > 0,
     formData.desired_date.trim().length > 0,
     formData.desired_semester.trim().length > 0,
+    formData.report_date.trim().length > 0,
     formData.practice_type.length > 0,
     formData.desired_weekday.trim().length > 0,
     formData.own_car.length > 0,
@@ -213,6 +224,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
         zonecode: formData.zonecode || null,
         desired_date: formData.desired_date,
         desired_semester: formData.desired_semester,
+        report_date: formData.report_date,
         practice_type: formData.practice_type,
         desired_weekday: formData.desired_weekday,
         own_car: formData.own_car,
@@ -567,6 +579,94 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                 />
               </motion.div>
 
+              {/* 성적보고일 */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={styles.inputGroup}
+              >
+                <label className={styles.inputLabel}>
+                  성적보고일<span className={styles.required}>*</span>
+                </label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select
+                    className={styles.selectField}
+                    style={{ flex: 1 }}
+                    value={formData.report_year}
+                    onChange={(e) => {
+                      const report_year = e.target.value;
+                      setFormData({
+                        ...formData,
+                        report_year,
+                        report_date:
+                          report_year &&
+                          formData.report_month &&
+                          formData.report_day
+                            ? `${report_year} ${formData.report_month} ${formData.report_day}`
+                            : "",
+                      });
+                    }}
+                  >
+                    <option value="">년도</option>
+                    {DESIRED_YEAR_OPTIONS.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className={styles.selectField}
+                    style={{ flex: 1 }}
+                    value={formData.report_month}
+                    onChange={(e) => {
+                      const report_month = e.target.value;
+                      setFormData({
+                        ...formData,
+                        report_month,
+                        report_date:
+                          formData.report_year &&
+                          report_month &&
+                          formData.report_day
+                            ? `${formData.report_year} ${report_month} ${formData.report_day}`
+                            : "",
+                      });
+                    }}
+                  >
+                    <option value="">월</option>
+                    {DESIRED_MONTH_OPTIONS.map((m) => (
+                      <option key={m} value={m}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className={styles.selectField}
+                    style={{ flex: 1 }}
+                    value={formData.report_day}
+                    onChange={(e) => {
+                      const report_day = e.target.value;
+                      setFormData({
+                        ...formData,
+                        report_day,
+                        report_date:
+                          formData.report_year &&
+                          formData.report_month &&
+                          report_day
+                            ? `${formData.report_year} ${formData.report_month} ${report_day}`
+                            : "",
+                      });
+                    }}
+                  >
+                    <option value="">일</option>
+                    {REPORT_DAY_OPTIONS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </motion.div>
+
               {/* 실습 진행시간 */}
               {showPracticeType && (
                 <motion.div
@@ -594,6 +694,18 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                       </option>
                     ))}
                   </select>
+
+                  {/* 신청학기·성적보고일·실습 진행시간 안내 */}
+                  <p
+                    className={styles.addressNote}
+                    style={{ color: "#6b7280" }}
+                  >
+                    ※ 신청학기, 성적보고일, 실습 진행시간은 담당자 꼭 확인 후 기입
+                    부탁드립니다
+                    <br />
+                    담당자 통해 확인치 않고 기입에 따른 문제는 저희가 책임지지
+                    않습니다
+                  </p>
                 </motion.div>
               )}
 

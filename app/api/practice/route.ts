@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
       zonecode,
       desired_date,
       desired_semester,
+      report_date,
       practice_type,
       desired_weekday,
       own_car,
@@ -83,6 +84,7 @@ export async function POST(request: NextRequest) {
       !address_detail ||
       !desired_date ||
       !desired_semester ||
+      !report_date ||
       !practice_type ||
       !desired_weekday ||
       !own_car ||
@@ -137,6 +139,7 @@ export async function POST(request: NextRequest) {
           zonecode: zonecode || null,
           desired_date,
           desired_semester,
+          grade_report_date: report_date,
           practice_type,
           desired_weekday,
           own_car,
@@ -177,6 +180,7 @@ export async function POST(request: NextRequest) {
         address: fullAddress,
         desired_date,
         desired_semester,
+        grade_report_date: report_date,
         practice_type,
         desired_weekday,
         own_car,

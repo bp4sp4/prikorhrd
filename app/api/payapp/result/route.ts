@@ -23,6 +23,13 @@ async function handleResult(
         })
         .eq('id', var1);
 
+      // 어드민 실습신청자 목록 상태 → 입금완료
+      // (feedback 서버-서버 웹훅이 도달하지 못하는 경우에도 브라우저 리다이렉트로 반영)
+      await supabaseAdmin
+        .from('practice_applicants')
+        .update({ status: '입금완료' })
+        .eq('source_application_id', var1);
+
       console.log(`[PAYAPP RESULT] 결제 완료 - 신청 ID: ${var1}, mul_no: ${mul_no}, 금액: ${price}원`);
       // Slack 알림은 feedback(서버-서버)에서만 전송
     }
