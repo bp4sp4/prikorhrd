@@ -485,7 +485,7 @@ function PracticeFormContent({ clickSource }: { clickSource: string }) {
                       }
                     />
                   )}
-                  <p className={styles.addressNote}>
+                  <p className={styles.addressNote} style={{ color: "#6b7280" }}>
                     *학교/거주지 근처로 실습처 신청이 진행됩니다
                   </p>
                 </motion.div>
